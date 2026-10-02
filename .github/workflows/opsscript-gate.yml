@@ -1,15 +1,12 @@
 name: Installer compatibility
 
 on:
-  workflow_dispatch:
   pull_request:
     paths:
       - install.sh
       - .github/workflows/opsscript-gate.yml
   push:
-    branches:
-      - main
-      - test/opsscript-gate-installer
+    branches: [main]
     paths:
       - install.sh
       - .github/workflows/opsscript-gate.yml
