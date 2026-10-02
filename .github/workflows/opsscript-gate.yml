@@ -7,7 +7,9 @@ on:
       - install.sh
       - .github/workflows/opsscript-gate.yml
   push:
-    branches: [main]
+    branches:
+      - main
+      - test/opsscript-gate-installer
     paths:
       - install.sh
       - .github/workflows/opsscript-gate.yml
