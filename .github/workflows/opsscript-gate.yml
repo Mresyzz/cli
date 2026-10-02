@@ -24,11 +24,15 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        image:
-          - debian:12-slim
-          - ubuntu:22.04
-          - ubuntu:24.04
-          - alpine:3.20
+        include:
+          - image: debian:12-slim
+            id: debian-12-slim
+          - image: ubuntu:22.04
+            id: ubuntu-22-04
+          - image: ubuntu:24.04
+            id: ubuntu-24-04
+          - image: alpine:3.20
+            id: alpine-3-20
 
     steps:
       - name: Check out
@@ -46,12 +50,12 @@ jobs:
             curl
             ca-certificates
             tar
-          output: reports/opsscript-gate-${{ matrix.image }}.json
+          output: reports/opsscript-gate-${{ matrix.id }}.json
 
       - name: Upload compatibility report
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: opsscript-gate-${{ matrix.image }}
+          name: opsscript-gate-${{ matrix.id }}
           path: reports/
           if-no-files-found: ignore
