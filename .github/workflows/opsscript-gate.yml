@@ -4,11 +4,13 @@ on:
   pull_request:
     paths:
       - install.sh
+      - .goreleaser.yaml
       - .github/workflows/opsscript-gate.yml
   push:
     branches: [main]
     paths:
       - install.sh
+      - .goreleaser.yaml
       - .github/workflows/opsscript-gate.yml
 
 permissions:
@@ -37,13 +39,25 @@ jobs:
         with:
           persist-credentials: false
 
+      - name: Add installation postcondition
+        shell: bash
+        run: |
+          cat install.sh > installer-smoke.sh
+          cat >> installer-smoke.sh <<'EOF'
+
+          # An installer exit code alone does not prove the binary was installed.
+          test -x "$HOME/.lsh/lsh" || { echo 'lsh was not installed' >&2; exit 1; }
+          "$HOME/.lsh/lsh" --version
+          EOF
+
       - name: Check installer compatibility
-        uses: Mresyzz/opsscript-gate@v0.8.0
+        uses: Mresyzz/opsscript-gate@v0.9.4
         with:
-          script-path: install.sh
+          script-path: installer-smoke.sh
           matrix: ${{ matrix.image }}
           network: bridge
           packages: |
+            bash
             curl
             ca-certificates
             tar
