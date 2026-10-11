@@ -42,7 +42,11 @@ jobs:
       - name: Add installation postcondition
         shell: bash
         run: |
-          cat install.sh > installer-smoke.sh
+          {
+            printf '#!/bin/bash\n(\n'
+            cat install.sh
+            printf '\n)\ninstaller_status=$?\n[ "$installer_status" -eq 0 ] || exit "$installer_status"\n'
+          } > installer-smoke.sh
           cat >> installer-smoke.sh <<'EOF'
 
           # An installer exit code alone does not prove the binary was installed.
